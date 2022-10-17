@@ -1,17 +1,19 @@
 const User = require('../user/user.model')
 const FavsList = require('./favsList.model')
 
-  //GET 
+  //GET Get all list of favorites
   const show = async (req, res) => {
     try {
-      const favsLists = await FavsList.find()
+      const id = req.user
+      const user = await User.findById(id)
+      const favsLists = await FavsList.find({user: id})
       res.status(200).json({ message: 'Favs Lists founded', data: favsLists})
     } catch(err) {
       res.status(400).json({ message: 'Favs Lists not founded', data: err})
     }
   }
 
-  //POST
+  //POST 	Creates a new list of favorites
   const create = async (req, res) => {
     try{
       const favslistData = req.body
@@ -30,23 +32,23 @@ const FavsList = require('./favsList.model')
     }
   }
 
-  //GET:id
+  //GET:id Get a single list of favorites
   const list = async (req, res) => {
     try {
-      const { favsListId } = req.params
-
+      const  { favsListId } = req.params
+      //const id = req.user
+      //const user = await User.findById(id)
       const favsList = await FavsList.findById(favsListId)
-      res.status(200).json({ message: 'Favs List founded', data: favsList})
+      res.status(200).json({ message: 'Favs List found', data: favsList})
     } catch(err) {
       res.status(404).json({ message: 'Favs List does not exist', data: err})
     }
   }
 
-  //DELETE:id
+  //DELETE:id Deletes a list of favorites
   const destroy = async (req, res) => {
     try {
       const { favsListId } = req.params
-
       const favsList = await FavsList.findByIdAndDelete(favsListId)
       res.status(200).json({ message: 'Favs List deleted', data: favsList})
     } catch(err) {
