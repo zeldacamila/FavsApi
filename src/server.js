@@ -7,15 +7,15 @@ const favsListRoute = require('./favsAPI/favsList/favsList.route')
 const userRoute = require('./favsAPI/user/user.route')
 
 const app = express()
-const port = process.env.PORT || 8080
+const port = process.env.PORT || 8082
 connect()
 
 app.use(morgan('dev'))
 app.use(cors())
 app.use(express.json())
 
-app.use('/favslists', favsListRoute)
-app.use('/signup', userRoute)
+app.use('/api/favs', favsListRoute)
+app.use('/auth/local', userRoute)
 
 
 app.listen((port), () => {

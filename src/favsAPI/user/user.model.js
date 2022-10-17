@@ -1,35 +1,29 @@
-const { model, Schema, models } = require("mongoose")
+const { model, Schema } = require('mongoose')
 
+//const passRegexp = new RegExp('/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[$@$!%*?&])[A-Za-z\d$@$!%*?&]{8,15}$/')
 
 const userSchema = new Schema(
   {
     email: {
       type: String,
-      required: true,
-      validate: {
-        async validator(email) {
-          try {
-            const user = await models.user.findOne({ email })
-            return !user
-          } catch (err) {
-            return false
-          }
-        },
-        message: "This email already exists"
-      },
+      required: true
     },
     password: {
       type: String,
-      required: true
+      required: true,
+      //match: [passRegexp, 'The password must be at least 8-16 characters long, with at least one digit, one lowercase, one uppercase, and one non-alphanumeric character.']
     },
     favslists: {
-      type: [{ type: Schema.Types.ObjectId, ref: "favslist"}],
+      type: [{ type: Schema.Types.ObjectId, ref: 'FavsList' }],
       required: false
     }
-  },
-  { timestamps: true }
+  }, 
+  { 
+    timestamps: true,
+    versionKey: false
+  }
 )
 
-const User = model("user", userSchema)
+const User = model('User', userSchema)
 
 module.exports = User

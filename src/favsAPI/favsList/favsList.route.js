@@ -1,9 +1,13 @@
-const router = require('express').Router()
-const favsListController = require('./favsList.controller')
+const { Router } = require('express')
+const { isAuthenticated } = require('../../middelware/authentication')
+const { create, show, list, destroy } = require('./favsList.controller')
 
-router.route('/').get(favsListController.show)
-router.route('/').post(favsListController.create)
-router.route('/:favsListId').get(favsListController.list)
-router.route('/:favsListId').delete(favsListController.destroy)
+const router = Router()
+
+router.post('/', isAuthenticated, create)
+router.get('/', isAuthenticated, show)
+
+router.get('/:favsListId', isAuthenticated, list)
+router.delete('/:favsListId', isAuthenticated, destroy)
 
 module.exports = router
