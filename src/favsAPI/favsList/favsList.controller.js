@@ -38,7 +38,7 @@ const FavsList = require('./favsList.model')
         path: 'user',
         select: 'email'
       })
-      res.status(200).json({ message: 'Favs List found', data: favsList})
+      res.status(200).json({ message: 'Favs list found', data: favsList})
     } catch(err) {
       res.status(404).json({ message: 'Favs List does not exist', data: err})
     }
@@ -61,15 +61,18 @@ const FavsList = require('./favsList.model')
 
 
   //DELETE:id Deletes a list of favorites
-  const destroy = async (req, res) => {
-    try {
-      const { favsListId } = req.params
-      const favsList = await FavsList.findByIdAndDelete(favsListId)
-      res.status(200).json({ message: 'Favs List deleted', data: favsList})
-    } catch(err) {
-      res.status(404).json({ message: 'Favs List does not exist', data: err})
+    const destroy = async (req, res) => {
+      try {
+        const { favsListId } = req.params
+        const id = req.user
+        const user = await User.findById(id)
+        const favsList = await FavsList.find({_id: favsListId, user: id})
+        const deletedfavslist = await FavsList.deleteOne(favsList._id)
+        res.status(200).json({ message: 'Favs List deleted', data: deletedfavslist})
+      } catch(err) {
+        res.status(404).json({ message: 'Favs List does not exist', data: err})
+      }
     }
-  }
 
 
   module.exports = { create, show, list, destroy, addFavs }

@@ -4,10 +4,7 @@ const jwt = require('jsonwebtoken')
 
 const listUsers = async (req, res) => {
   try {
-    const users = await User.find().populate({
-      path: 'favslists',
-      select: 'name favs'
-    })
+    const users = await User.find()
     console.log(users)
     res.status(200).json({message: 'Users found', data: users })
   } catch (err) {
