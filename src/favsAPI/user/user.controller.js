@@ -5,9 +5,20 @@ const jwt = require('jsonwebtoken')
 const listUsers = async (req, res) => {
   try {
     const users = await User.find()
+    console.log(users)
     res.status(200).json({message: 'Users found', data: users })
   } catch (err) {
     res.status(400).json({message: 'Users cannot be found', data: err })
+  }
+}
+
+const findOneUser = async (req, res) => {
+  try {
+    const  { userId } = req.params
+    const user = await User.findById(userId)
+    res.status(200).json({message: 'User found', data: user })
+  } catch (err) {
+    res.status(400).json({message: 'User cannot be found', data: err })
   }
 }
 
@@ -24,8 +35,6 @@ const destroy = async (req, res) => {
 const signup = async (req, res) => {
   try {
     const { password, email } = req.body
-
-    //console.log('pass:', password, 'email:', email)
     const passwordHash = await bcrypt.hash(password, 10)
     const user = await User.create({ email, password: passwordHash })
     const token = jwt.sign({ id: user._id }, process.env.SECRET_KEY, {expiresIn: 60 * 60 * 24})
@@ -50,8 +59,8 @@ const login = async (req, res) => {
     const token = jwt.sign({ id: user._id }, process.env.SECRET_KEY, { expiresIn: 60 * 60 * 24 })
     return res.status(200).json(token)
   } catch (error) {
-    return res.status(400).json(error.message)
+    return res.status(400).json({message: 'user cant login', data: error.message})
   }
 }
 
-module.exports = { signup, login, listUsers, destroy }
+module.exports = { signup, login, listUsers, findOneUser, destroy }

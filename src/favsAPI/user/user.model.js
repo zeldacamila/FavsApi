@@ -1,12 +1,25 @@
-const { model, Schema } = require('mongoose')
+const { model, Schema, models } = require('mongoose')
 
-//const passRegexp = new RegExp('/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[$@$!%*?&])[A-Za-z\d$@$!%*?&]{8,15}$/')
+//const passRegexp = new RegExp('^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,16}$')
 
 const userSchema = new Schema(
   {
     email: {
       type: String,
-      required: true
+      required: true,
+      validate: {
+        async validator(email) {
+          console.log(email)
+          try {
+            const user = await models.User.findOne({ email })
+            return !user
+          } catch (err) {
+            return false
+          }
+          
+        },
+        message: "Email has already been taken"
+      }
     },
     password: {
       type: String,
