@@ -35,11 +35,20 @@ const destroy = async (req, res) => {
 const signup = async (req, res) => {
   try {
     const { password, email } = req.body
+    console.log(password)
+    const passRegexp = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,16}$/
+    const validatePassword = passRegexp.test(password)
+    console.log(validatePassword)
+    if (!validatePassword) {
+      return res.status(400).json({message: 'The password must be at least 8-16 characters long, with at least one digit, one lowercase, one uppercase, and one non-alphanumeric character.'});
+    } else {
+    
     const passwordHash = await bcrypt.hash(password, 10)
     const user = await User.create({ email, password: passwordHash })
     const token = jwt.sign({ id: user._id }, process.env.SECRET_KEY, {expiresIn: 60 * 60 * 24})
    
     return res.status(201).json(token)
+    }
   } catch (err) {
     return res.status(400).json({message: 'User cannot be created', data: err})
   }
